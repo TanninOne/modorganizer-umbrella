@@ -66,6 +66,7 @@ config = {
     },
     'architecture': 'x86_64',
     'vc_version':   '12.0',
+    'vc_year':      '2013',
     'build_type': "RelWithDebInfo",
     'ide_projects': False,
     'offline': False,                       # if set, non-mandatory network requests won't be made.
