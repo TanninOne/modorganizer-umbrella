@@ -21,8 +21,8 @@ from unibuild.modules import cmake, urldownload
 from config import config
 import os
 
+zlib_version = "1.2.10"
 
-zlib_version = "1.2.9"
 
 
 Project("zlib") \
