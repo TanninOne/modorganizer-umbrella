@@ -41,8 +41,19 @@ def get_from_hklm(path, name, wow64=False):
     if wow64:
         flags |= KEY_WOW64_32KEY
 
-    with OpenKey(HKEY_LOCAL_MACHINE, path, 0, flags) as key:
-        return QueryValueEx(key, name)[0]
+# avoids crashing if a product is not present
+    try:
+        with OpenKey(HKEY_LOCAL_MACHINE, path, 0, flags) as key:
+            return QueryValueEx(key, name)[0]
+    except:
+        return ""
+
+# To detect the editon of VS installed as of VS 2017
+vs_editions = [
+    "enterprise",
+    "professional",
+    "community",
+]
 
 
 program_files_folders = [
@@ -64,10 +75,12 @@ config = {
     'tools': {
         'make': "nmake",
     },
-    'architecture': 'x86_64',
+    'architecture': 'x86_64',               # Don't change this as we spawn the usvfs x86 build later on.
     'vc_version':   '14.0',
+    'vc_platformtoolset':  'v140',
+    'vc_CustomInstallPath': '',             # If you installed VC to a custom location put the full path here
+                                            # eg. E:\Microsoft Visual Studio 14.0
     'build_type': "RelWithDebInfo",
-    'ide_projects': False,
     'offline': False,                       # if set, non-mandatory network requests won't be made.
                                             # This is stuff like updating source repositories. The initial
                                             # download of course can't be surpressed.
@@ -75,18 +88,33 @@ config = {
     'optimize': False,                      # activate link-time code generation and other optimization.
                                             # This massively increases build time but produces smaller
                                             # binaries and marginally faster code
+    'Installer': True,                     # Used to create installer at end of build, Forces everything to be built
     'repo_update_frequency': 60 * 60 * 24,  # in seconds
     'num_jobs': multiprocessing.cpu_count() + 1,
 
-    'Main_Author': 'TanninOne',
+    'Main_Author': 'LePresidente',			# the current maintainer
+    'Distrib_Author': 'TanninOne',			# the current distribution (and the original Author)
+    'Work_Author': 'Hugues92',  			# yourself
 
+	'qt_version':	'5.8',					# currently evolving
+	'openssl_version': '1.0.2k',			# changes often, so better to edit here
+	'zlib_version': '1.2.11',				# changes often, so better to edit here
+	'grep_version': '2.5.4',				# moved here as commented in qt5.py
+	'boost_version': '1.64.0',				# for -DBOOST_ROOT, also, it is either to change from here
+	'vc_version_for_boost': '14.0',			# boost 1.63 does not support VS 2017 yet
+	'python_version': '2.7',				# used below and in python.py
+	'python_version_minor': '.13',			# used in python.py
+	'icu_version': '58',					# used in PyQt5
+	'icu_version_minor': '2',				# for consistency
+    'WixToolSet_Version_Binary': '311',               # Wix Binary Version
 }
 
 config['paths'] = {
     'download':      "{base_dir}\\downloads",
-    'build':         "{base_dir}\\build",
-    'progress':      "{base_dir}\\progress",
-    'graphviz':      path_or_default("dot.exe",   "Graphviz2.38", "bin"),
+    'build':         "{base_dir}\\{build_dir}",
+    'progress':      "{base_dir}\\{progress_dir}",
+    'install':      "{base_dir}\\{install_dir}",
+#    'graphviz':      path_or_default("dot.exe",   "Graphviz2.38", "bin"),
     'cmake':         path_or_default("cmake.exe", "CMake", "bin"),
     'git':           path_or_default("git.exe",   "Git", "bin"),
     'perl':          path_or_default("perl.exe",  "StrawberryPerl", "bin"),
@@ -94,15 +122,11 @@ config['paths'] = {
     'svn':           path_or_default("svn.exe",   "SlikSvn", "bin"),
     '7z':            path_or_default("7z.exe",    "7-Zip"),
     # we need a python that matches the build architecture
-    'python':        Lazy(lambda: os.path.join(get_from_hklm(r"SOFTWARE\Python\PythonCore\2.7\InstallPath",
+    'python':        Lazy(lambda: os.path.join(get_from_hklm(r"SOFTWARE\Python\PythonCore\{}\InstallPath".format(config['python_version']),
                                                              "", config['architecture'] == "x86"),
                                                "python.exe")),
-    'visual_studio': os.path.realpath(
-        os.path.join(get_from_hklm(r"SOFTWARE\Microsoft\VisualStudio\{}".format(config['vc_version']),
-                                   "InstallDir", True),
-                     "..", "..", "VC"
-                     )
-    )
+    'visual_studio_base': "",
+    'visual_studio': ""			# will be set in unimake.py after args are evaluated
 }
 
 if missing_prerequisites:

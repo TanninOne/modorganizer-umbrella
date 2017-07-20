@@ -1,6 +1,11 @@
 # modorganizer-umbrella
 An umbrella- (super-) project for modorganizer.
 
+##Build instructions for all required Components
+
+Build Instructions:
+unimake.py -d "F:\Build"
+
 ## Purpose
 This repository contains a meta build-system that is able to download and build MO subprojects and dependencies as necessary.
 It can be used to build the whole project to produce a build that should be equivalent to the release or to build subprojects (i.e. plugins) with the minimum of dependencies.
@@ -38,16 +43,14 @@ Windows 7 and up (64bit)
 
 All the following need to be either on your PATH, or available from Program Files, Program Files (x86), C:\ or D:\. Note that apart from ruby, these things install themselves in Program Files or Program Files (x86) by default so ruby is the only one you might need to be careful about.
 
-* python 2.7 (2.7.12 x64)
+* python 2.7 (2.7.13 x64)
   * decorator
-*  visual C++ 2013 (visual C++ 2015 broken due to https://github.com/TanninOne/usvfs/issues/1)
+*  visual Studio 2015 (Including VC Common tools)
 
 * cmake
 * 7zip - specifically, the command line version (7za)
 * svn (SlinkSVN)
-* dot (from Graphviz)
 * ruby (v2.2 x64)
-* hg (TortoiseHg)
 * git
 * perl (Strawberry Perl)
 
@@ -64,7 +67,7 @@ optional arguments:
   -f FILE, --file FILE  sets the build script
   -d DESTINATION, --destination DESTINATION
                         output directory (base for download and build)
-```
+  -s config_option_name=value, --set config_option_name=value change a config option
 
 I'd suggest to use a destination folder that isn't too deep, some dependencies don't handle long paths well.
 If the make target is left empty, everything is built.

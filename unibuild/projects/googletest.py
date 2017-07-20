@@ -24,13 +24,13 @@ import shutil
 import fnmatch
 
 
-googletest_version = "1.7.0"
+googletest_version = "1.8.0"
 
 
 def install(context):
     for root, dirnames, filenames in os.walk(os.path.join(context['build_path'], "build")):
         for filename in fnmatch.filter(filenames, "*.lib"):
-            shutil.copy(os.path.join(root, filename), os.path.join(config['__build_base_path'], "install", "libs"))
+            shutil.copy(os.path.join(root, filename), os.path.join(config["paths"]["install"], "libs"))
 
     return True
 
@@ -40,6 +40,6 @@ Project("GTest") \
             .depend(cmake.CMake().arguments(["-Dgtest_force_shared_crt=ON",
                                              "-DCMAKE_BUILD_TYPE={0}".format(config["build_type"])
                                              ])
-                    .depend(github.Source("google", "googletest", "master")))
+                    .depend(github.Source("google", "googletest", "release-{}".format(googletest_version))))
             )
 

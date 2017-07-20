@@ -34,16 +34,16 @@ timeout = 15   # seconds
 def bitness():
     return "64" if config['architecture'] == "x86_64" else "32"
 
-filename = "setup-x86_64.exe"
+filename = "setup-{}.exe".format(config['architecture'])
 
-url = "http://www.cygwin.com/setup-x86_64.exe"
+url = "http://www.cygwin.com/{}".format(filename)
 
 Cygwin_Mirror = "http://mirrors.kernel.org/sourceware/cygwin/"
 
 
 def build_func(context):
     proc = Popen([os.path.join(config['paths']['download'], filename),
-                  "-q", "-C", "Base", "-P", "make,dos2unix,binutils", "-n", "-d", "-O", "-B", "-R", "{}/../cygwin"
+                   "-q","-C", "Base", "-P", "make,dos2unix,binutils", "-n", "-d", "-O", "-B", "-R", "{}/../cygwin"
                  .format(context['build_path']), "-l", "{}".format(os.path.join(config['paths']['download'])),
                   "-s", "{}".format(Cygwin_Mirror)],env=config['__environment'])
     proc.communicate()
