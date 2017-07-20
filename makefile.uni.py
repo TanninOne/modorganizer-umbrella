@@ -29,8 +29,8 @@ import os
 Settings
 """
 
-loot_version = "0.9.2"
-commit_id = "g6b58f92"
+loot_version = "0.10.3"
+commit_id = "g0fcf788"
 
 """
 Projects
@@ -40,10 +40,9 @@ Projects
 from unibuild.projects import sevenzip, qt5, boost, zlib, python, sip, pyqt5
 from unibuild.projects import asmjit, udis86, googletest, spdlog, fmtlib, lz4
 
-# TODO modorganizer-lootcli needs an overhaul as the api has changed alot
 Project("LootApi") \
     .depend(patch.Copy("loot_api.dll".format(loot_version,commit_id), os.path.join(config['__build_base_path'], "install", "bin", "loot"))
-            .depend(github.Release("loot", "loot", loot_version, "loot-api_{}-0-{}_dev".format(loot_version,commit_id),"7z",tree_depth=1)
+                        .depend(github.Release("loot", "loot", loot_version, "loot-api_{}-0-{}_dev_{}".format(loot_version,commit_id,"Win32" if config['architecture'] == 'x86' else "x64"),"7z",tree_depth=1)
                     .set_destination("lootapi"))
            )
 
@@ -125,7 +124,7 @@ usvfs.depend(cmake.CMake().arguments(cmake_parameters +
 
 
 for author,git_path, path, branch, dependencies in [
-    (config['Main_Author'],               "modorganizer-archive",           "archive",           "master",          ["7zip", "Qt5"]),
+    (config['Main_Author'],               "modorganizer-archive",           "archive",           "API_9.20",          ["7zip", "Qt5"]),
     (config['Main_Author'],               "modorganizer-uibase",            "uibase",            "new_vfs_library", ["Qt5", "boost"]),
     (config['Main_Author'],               "modorganizer-lootcli",           "lootcli",           "master",          ["LootApi", "boost"]),
     (config['Main_Author'],               "modorganizer-esptk",             "esptk",             "master",          ["boost"]),
@@ -149,7 +148,7 @@ for author,git_path, path, branch, dependencies in [
     (config['Main_Author'],               "modorganizer-game_skyrim",       "game_skyrim",       "master",          ["Qt5", "modorganizer-uibase",
                                                                                                                     "modorganizer-game_gamebryo",
                                                                                                                     "modorganizer-game_features"]),
-    ("LePresidente",                             "modorganizer-game_skyrimSE",    "game_skyrimse",     "dev",        ["Qt5", "modorganizer-uibase",
+    (config['Main_Author'],                             "modorganizer-game_skyrimSE",    "game_skyrimse",     "dev",        ["Qt5", "modorganizer-uibase",
                                                                                                                     "modorganizer-game_gamebryo",
                                                                                                                     "modorganizer-game_features"]),
     (config['Main_Author'],               "modorganizer-tool_inieditor",    "tool_inieditor",    "master",          ["Qt5", "modorganizer-uibase"]),

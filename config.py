@@ -66,13 +66,14 @@ config = {
     },
     'architecture': 'x86_64',
     'vc_version':   '12.0',
+    'vc_year':      '2013',
     'build_type': "RelWithDebInfo",
     'ide_projects': False,
     'offline': False,                       # if set, non-mandatory network requests won't be made.
                                             # This is stuff like updating source repositories. The initial
                                             # download of course can't be surpressed.
     'prefer_binary_dependencies': False,    # currently non-functional
-    'optimize': False,                      # activate link-time code generation and other optimization.
+    'optimize': True,                      # activate link-time code generation and other optimization.
                                             # This massively increases build time but produces smaller
                                             # binaries and marginally faster code
     'repo_update_frequency': 60 * 60 * 24,  # in seconds

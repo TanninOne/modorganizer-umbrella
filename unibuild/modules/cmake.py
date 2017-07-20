@@ -160,8 +160,8 @@ class CMakeEdit(Builder):
 
     def __generator_name(self):
         if self.__type == CMakeEdit.Type.VC:
-            return "Visual Studio {} {}"\
-                .format(config['vc_version'].split('.')[0], self.__vc_year(config['vc_version']))
+            return "Visual Studio {} {} {}"\
+                .format(config['vc_version'].split('.')[0], self.__vc_year(config['vc_version']),"" if config['architecture']=='x86' else "Win64")
         elif self.__type == CMakeEdit.Type.CodeBlocks:
             return "CodeBlocks - NMake Makefiles"
 
